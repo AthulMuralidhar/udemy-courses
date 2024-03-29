@@ -1,6 +1,8 @@
 
 #include "raylib.h"
 
+bool HasCollided(int, int, int, int, int, int, int, int);
+
 int main()
 {
 
@@ -41,7 +43,9 @@ int main()
 
     int direction{10};
     int key_movement{10};
-    bool collision_with_axe = true;
+
+    bool collision_with_axe = HasCollided(circle_top_edge, circle_bottom_edge, circle_left_edge, circle_right_edge, axe_top_edge, axe_bottom_edge, axe_left_edge, axe_right_edge);
+
 
     SetTargetFPS(fps);
 
@@ -49,6 +53,23 @@ int main()
     {
         BeginDrawing();
         ClearBackground(WHITE);
+
+        // updating the edges
+        // circle
+        circle_right_edge = circle_x + circle_radius;
+        circle_left_edge = circle_x - circle_radius;
+        circle_bottom_edge = circle_y + circle_radius;
+        circle_top_edge = circle_y - circle_radius;
+        // rectangle
+        axe_bottom_edge = axe_y + axe_height;
+        axe_right_edge = axe_x + axe_width;
+        axe_top_edge = axe_y;
+        axe_left_edge = axe_x;
+
+
+        // update collision
+        collision_with_axe = HasCollided(circle_top_edge, circle_bottom_edge, circle_left_edge, circle_right_edge, axe_top_edge, axe_bottom_edge, axe_left_edge, axe_right_edge);
+
 
         if (collision_with_axe == true)
         {
@@ -92,5 +113,25 @@ int main()
         }
 
         EndDrawing();
+    }
+}
+
+bool HasCollided(int circle_top, int circle_bottom, int circle_left, int circle_right, int axe_top, int axe_bottom, int axe_left, int axe_right)
+{
+    /*
+     * conditions for collision:
+     * bottom edge of axe >= top edge of circle
+     * top edge of axe <=  bottom edge of circle
+     * right edge of axe  >=  left edge of circle
+     * left edge of the axe  < = right edge of circle
+     */
+
+    if ((axe_bottom >= circle_top) && (axe_top <= circle_bottom) && (axe_right >= circle_left) && (axe_left <= circle_right))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
     }
 }
