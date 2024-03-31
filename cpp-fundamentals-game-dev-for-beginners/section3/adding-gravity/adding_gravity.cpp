@@ -20,7 +20,9 @@ int main() {
     // game variables
     int velocity{0};  // pixel per frame
     const int gravity = 1; // pixel per frame per frame
+    // is the axe in air?
     bool isInAir(false);
+    const int jumpVelocity = -22;
 
 
     SetTargetFPS(fps);
@@ -40,19 +42,20 @@ int main() {
         {
             // rectangle is in the ground
             velocity = 0;
-            isInAir = true;
+            isInAir = false;
             
         } else {
 
             // rectangle is in the air
             velocity += gravity; 
-            isInAir = false;
+            isInAir = true;
         }
         
-        if (IsKeyPressed(KEY_SPACE) && isInAir)
+        // jump check
+        if (IsKeyPressed(KEY_SPACE) && !isInAir)
         {
             // make the rectangle jump
-            velocity -= 10; // negative sign means upwards
+            velocity += jumpVelocity; // negative sign means upwards
         }
         
 
