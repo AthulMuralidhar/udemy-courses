@@ -20,6 +20,7 @@ int main() {
     // game variables
     int velocity{0};  // pixel per frame
     const int gravity = 1; // pixel per frame per frame
+    bool isInAir(false);
 
 
     SetTargetFPS(fps);
@@ -39,14 +40,16 @@ int main() {
         {
             // rectangle is in the ground
             velocity = 0;
+            isInAir = true;
             
         } else {
 
             // rectangle is in the air
             velocity += gravity; 
+            isInAir = false;
         }
         
-        if (IsKeyPressed(KEY_SPACE))
+        if (IsKeyPressed(KEY_SPACE) && isInAir)
         {
             // make the rectangle jump
             velocity -= 10; // negative sign means upwards
