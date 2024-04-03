@@ -19,10 +19,11 @@ int main()
 
     // animation frame
     int frame{};
-
     // time between each animation frame
+    // also this number 12.0 is a choice based on the sprite sheet and the time between animations
+    // can vary if there are more sheets in the sprite and how fast we have set the fps
+    // for ex: using 24.0 just means that the animation now runs twice as fast
     const float updateTime = 1.0 / 12.0; // we want to update animation 12 times in 1 sec
-
     // time passed between 2 animation frames
     float runningTime{};
 
@@ -81,6 +82,9 @@ int main()
         scruffyPos.y += velocity * dT;
 
         // animation logic
+        // update running time
+        runningTime += dT;
+
         if (runningTime >= updateTime)
         {
             runningTime = 0.0;
@@ -93,9 +97,6 @@ int main()
                 frame = 0;
             }
         }
-
-        // update running time
-        runningTime += dT;
 
         // draw rect
         DrawTextureRec(scruffy, scruffyRec, scruffyPos, WHITE);
