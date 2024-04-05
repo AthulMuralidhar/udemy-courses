@@ -1,6 +1,11 @@
 
 #include "raylib.h"
 
+// update animation 12 times in 1 sec
+const float UPDATE_TIME = 1.0 / 12.0;
+
+int updateScruffyAnimation(float &runningTime, int &frame, Rectangle &scruffyRectangle);
+
 int main()
 {
     // window coordinates
@@ -19,13 +24,12 @@ int main()
 
     // animation frame
     int frame{};
-    const float updateTime = 1.0 / 12.0; // update animation 12 times in 1 sec
     // time passed between 2 animation frames
     float runningTime{};
 
     // scruffy variables
     Texture2D scruffy = LoadTexture("./textures/scarfy.png");
-    Rectangle scruffyRectangle{0.0, 0.0, scruffy.width / 6, scruffy.height};
+    Rectangle scruffyRectangle{0.0, 0.0, scruffy.width / 6.0, scruffy.height};
     Vector2 scruffyPosition{windowWidth / 2 - scruffyRectangle.width / 2, windowHeight - scruffyRectangle.height}; // bottom centre
 
     // nebula variables
@@ -75,24 +79,11 @@ int main()
         scruffyPosition.y += velocity * dT;
 
         // animation logic
-        // update running time
-        runningTime += dT;
-
-        if (runningTime >= updateTime)
+        if (!isInAir) // stop animating when in air
         {
-            runningTime = 0.0;
-            // update scruffy animation frame
-            if (!isInAir)
-            {
-                scruffyRectangle.x = frame * scruffyRectangle.width;
-                frame++;
-            }
-            
-            if (frame > 5)
-            {
-                // this check is necessary as we only have 0 to 5 sheets in the sprite sheet
-                frame = 0;
-            }
+            // update running time
+            runningTime += dT;
+            frame = updateScruffyAnimation(runningTime, frame, scruffyRectangle);
         }
 
         // draw scruffy rect
@@ -107,4 +98,22 @@ int main()
     UnloadTexture(scruffy);
     UnloadTexture(nebula);
     CloseWindow();
+}
+
+int updateScruffyAnimation(float &runningTime, int &frame, Rectangle &scruffyRectangle)
+{
+    if (runningTime >= UPDATE_TIME)
+    {
+        runningTime = 0.0;
+        // update scruffy animation frame
+        scruffyRectangle.x = frame * scruffyRectangle.width;
+        frame++;
+
+        if (frame > 5)
+        {
+            // this check is necessary as we only have 0 to 5 sheets in the sprite sheet
+            frame = 0;
+        }
+    }
+    return frame;
 }
