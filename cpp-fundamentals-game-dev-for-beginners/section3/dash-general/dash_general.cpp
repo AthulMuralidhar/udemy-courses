@@ -29,12 +29,12 @@ int main()
 
     // scruffy
     Texture2D scruffy = LoadTexture("./textures/scarfy.png");
-    Rectangle scruffyRec;
+    Rectangle scruffyRec;  // this rect is used to draw a rectangle onto the sprite itself
     scruffyRec.width = scruffy.width / 6; // 6 cause there are 6 pictures in the sprite sheet
     scruffyRec.height = scruffy.height;
     scruffyRec.x = 0;
     scruffyRec.y = 0;
-    Vector2 scruffyPos;
+    Vector2 scruffyPos;  // this is the position of the left corner of the scruffyRec
     // first part aligns`   es the (0,0) of scarfy rec to the centre of the screen, but we need scruffy to be exactly in the centre of the screen so we substract the other bit
     scruffyPos.x = windowWidth / 2 - scruffyRec.width / 2;
     scruffyPos.y = windowHeight - scruffyRec.height; // this places scruffy on the ground
