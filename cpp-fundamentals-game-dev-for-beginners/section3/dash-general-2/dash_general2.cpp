@@ -2,9 +2,12 @@
 #include "raylib.h"
 
 // update animation 12 times in 1 sec
-const float UPDATE_TIME = 1.0 / 12.0;
+const float SCRUFFY_UPDATE_TIME = 1.0 / 12.0;
+const float NEBULA_UPDATE_TIME = 1.0 / 12.0;
 
-int updateScruffyAnimation(float &runningTime, int &frame, Rectangle &scruffyRectangle);
+void updateScruffyAnimation(float &runningTime, int &frame, Rectangle &scruffyRectangle);
+
+void updateHazardAnimation(float &runningTime, int &frame, Rectangle &nebulaRectangle);
 
 int main()
 {
@@ -22,22 +25,26 @@ int main()
     bool isInAir(false);
     const int jumpVelocity = -600; // pixel per second
 
-    // animation frame
-    int frame{};
-    // time passed between 2 animation frames
-    float runningTime{};
+
 
     // scruffy variables
     Texture2D scruffy = LoadTexture("./textures/scarfy.png");
     Rectangle scruffyRectangle{0.0, 0.0, scruffy.width / 6.0, scruffy.height};
     Vector2 scruffyPosition{windowWidth / 2 - scruffyRectangle.width / 2, windowHeight - scruffyRectangle.height}; // bottom centre
+    // animation frame
+    int scruffyFrame{};
+    // time passed between 2 animation frames
+    float scruffyRunningTime{};
 
     // nebula variables
     Texture2D nebula = LoadTexture("./textures/12_nebula_spritesheet.png");
     Rectangle nebulaRecangle{0.0, 0.0, nebula.width / 8, nebula.height / 8}; // 8 x 8 sprite sheet
     Vector2 nebulaPosition{windowWidth, windowHeight - nebulaRecangle.height};
     // nebula x velocity (pixels/second)
-    int nebulaVelocity{-600};
+    int nebulaVelocity{-200};
+    int nebulaFrame{};
+    float nebulaRunningTime{};   
+
 
     SetTargetFPS(fps);
     // game loop
@@ -78,13 +85,17 @@ int main()
         // update scruffy position
         scruffyPosition.y += velocity * dT;
 
-        // animation logic
+        // scruffy animation logic
         if (!isInAir) // stop animating when in air
         {
             // update running time
-            runningTime += dT;
-            frame = updateScruffyAnimation(runningTime, frame, scruffyRectangle);
+            scruffyRunningTime += dT;
+            updateScruffyAnimation(scruffyRunningTime, scruffyFrame, scruffyRectangle);
         }
+
+        // nebula animation logic
+        nebulaRunningTime += dT;
+        updateHazardAnimation(nebulaRunningTime, nebulaFrame, nebulaRecangle);
 
         // draw scruffy rect
         DrawTextureRec(scruffy, scruffyRectangle, scruffyPosition, WHITE);
@@ -100,9 +111,9 @@ int main()
     CloseWindow();
 }
 
-int updateScruffyAnimation(float &runningTime, int &frame, Rectangle &scruffyRectangle)
+void updateScruffyAnimation(float &runningTime, int &frame, Rectangle &scruffyRectangle)
 {
-    if (runningTime >= UPDATE_TIME)
+    if (runningTime >= SCRUFFY_UPDATE_TIME)
     {
         runningTime = 0.0;
         // update scruffy animation frame
@@ -115,5 +126,22 @@ int updateScruffyAnimation(float &runningTime, int &frame, Rectangle &scruffyRec
             frame = 0;
         }
     }
-    return frame;
+}
+
+
+void updateHazardAnimation(float &runningTime, int &frame, Rectangle &nebulaRectangle)
+{
+    if (runningTime >= NEBULA_UPDATE_TIME)
+    {
+        runningTime = 0.0;
+        // update scruffy animation frame
+        nebulaRectangle.x = frame * nebulaRectangle.width;
+        frame++;
+
+        if (frame > 7)  // 8 x 8 sheet and we only use the 1st row
+        {
+            // this check is necessary as we only have 0 to 5 sheets in the sprite sheet
+            frame = 0;
+        }
+    }
 }
