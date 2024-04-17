@@ -16,7 +16,7 @@ struct AnimationData
 };
 
 void updateScruffyAnimation(AnimationData &scruffy);
-void updateHazardAnimation(float &runningTime, int &frame, Rectangle &nebulaRectangle);
+void updateNebulaAnimation(AnimationData &nebula);
 
 int main()
 {
@@ -45,13 +45,24 @@ int main()
     };
 
     // nebula variables
-    Texture2D nebula = LoadTexture("./textures/12_nebula_spritesheet.png");
-    Rectangle nebulaRecangle{0.0, 0.0, nebula.width / 8, nebula.height / 8}; // 8 x 8 sprite sheet
-    Vector2 nebulaPosition{windowWidth, windowHeight - nebulaRecangle.height};
-    // nebula x velocity (pixels/second)
-    int nebulaVelocity{-200};
-    int nebulaFrame{};
-    float nebulaRunningTime{};
+    AnimationData nebula1Data{
+        .texture = LoadTexture("./textures/12_nebula_spritesheet.png"),
+        .rectangle = {0.0, 0.0, nebula1Data.texture.width / 8, nebula1Data.texture.height / 8},
+        .position = {windowWidth, windowHeight - nebula1Data.rectangle.height}, 
+        .frame = 0,
+        .runningTime = 0.0,
+        .velocity = -200, // px per sec
+    };
+
+        AnimationData nebula2Data{
+        .texture = LoadTexture("./textures/12_nebula_spritesheet.png"),
+        .rectangle = {0.0, 0.0, nebula1Data.texture.width / 8, nebula1Data.texture.height / 8},
+        .position = {windowWidth + 300, windowHeight - nebula1Data.rectangle.height}, // +300px as offset
+        .frame = 0,
+        .runningTime = 0.0,
+        .velocity = -200, // px per sec
+    };
+
 
     SetTargetFPS(fps);
     // game loop
@@ -87,7 +98,8 @@ int main()
         }
 
         // update
-        nebulaPosition.x += nebulaVelocity * dT;
+        nebula1Data.position.x += nebula1Data.velocity * dT;
+        nebula2Data.position.x += nebula2Data.velocity * dT;
 
         // update scruffy position
         scruffyData.position.y += scruffyData.velocity * dT;
@@ -101,20 +113,24 @@ int main()
         }
 
         // nebula animation logic
-        nebulaRunningTime += dT;
-        updateHazardAnimation(nebulaRunningTime, nebulaFrame, nebulaRecangle);
+        nebula1Data.runningTime += dT;
+        nebula2Data.runningTime += dT;
+        updateNebulaAnimation(nebula1Data);
+        updateNebulaAnimation(nebula2Data);
 
         // draw scruffy rect
         DrawTextureRec(scruffyData.texture, scruffyData.rectangle, scruffyData.position, WHITE);
         // draw nebula rect
-        DrawTextureRec(nebula, nebulaRecangle, nebulaPosition, WHITE);
+        DrawTextureRec(nebula1Data.texture, nebula1Data.rectangle, nebula1Data.position, WHITE);
+        DrawTextureRec(nebula2Data.texture, nebula2Data.rectangle, nebula2Data.position, RED);
 
         // game logic ends
         EndDrawing();
     }
 
     UnloadTexture(scruffyData.texture);
-    UnloadTexture(nebula);
+    UnloadTexture(nebula1Data.texture);
+    UnloadTexture(nebula2Data.texture);
     CloseWindow();
 }
 
@@ -135,19 +151,19 @@ void updateScruffyAnimation(AnimationData &scruffy)
     }
 }
 
-void updateHazardAnimation(float &runningTime, int &frame, Rectangle &nebulaRectangle)
+void updateNebulaAnimation(AnimationData &nebula)
 {
-    if (runningTime >= NEBULA_UPDATE_TIME)
+    if (nebula.runningTime >= NEBULA_UPDATE_TIME)
     {
-        runningTime = 0.0;
+        nebula.runningTime = 0.0;
         // update scruffy animation frame
-        nebulaRectangle.x = frame * nebulaRectangle.width;
-        frame++;
+        nebula.rectangle.x = nebula.frame * nebula.rectangle.width;
+        nebula.frame++;
 
-        if (frame > 7) // 8 x 8 sheet and we only use the 1st row
+        if (nebula.frame > 7) // 8 x 8 sheet and we only use the 1st row
         {
             // this check is necessary as we only have 0 to 5 sheets in the sprite sheet
-            frame = 0;
+            nebula.frame = 0;
         }
     }
 }
