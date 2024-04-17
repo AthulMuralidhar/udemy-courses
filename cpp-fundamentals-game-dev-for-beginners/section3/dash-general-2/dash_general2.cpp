@@ -1,9 +1,6 @@
 
 #include "raylib.h"
 
-// update animation 12 times in 1 sec
-const float SCRUFFY_UPDATE_TIME = 1.0 / 12.0;
-const float NEBULA_UPDATE_TIME = 1.0 / 12.0;
 
 struct AnimationData
 {
@@ -12,6 +9,7 @@ struct AnimationData
     Vector2 position;
     int frame;
     float runningTime;
+    float updateTime;
     int velocity;
 };
 
@@ -21,11 +19,12 @@ void updateNebulaAnimation(AnimationData &nebula);
 int main()
 {
     // window coordinates
-    const int windowWidth = 512;
-    const int windowHeight = 380;
+    // const int windowWidth = 512;
+    // const int windowHeight = 380;
+    const int windowDimensions[2] = {512,380};  // width, height
     int fps = 60;
     // initialise window
-    InitWindow(windowWidth, windowHeight, "dasher");
+    InitWindow(windowDimensions[0], windowDimensions[1], "dasher");
 
     // game variables
     const int gravity = 1000; // pixel per second per second
@@ -38,9 +37,10 @@ int main()
     AnimationData scruffyData{
         .texture = LoadTexture("./textures/scarfy.png"),
         .rectangle = {0.0, 0.0, scruffyData.texture.width / 6.0, scruffyData.texture.height},
-        .position = {windowWidth / 2 - scruffyData.rectangle.width / 2, windowHeight - scruffyData.rectangle.height}, // bottom centre
+        .position = {windowDimensions[0] / 2 - scruffyData.rectangle.width / 2, windowDimensions[1] - scruffyData.rectangle.height}, // bottom centre
         .frame = 0,
         .runningTime = 0.0,
+        .updateTime = 1.0/12.0,
         .velocity = 0, // px per sec
     };
 
@@ -48,18 +48,20 @@ int main()
     AnimationData nebula1Data{
         .texture = LoadTexture("./textures/12_nebula_spritesheet.png"),
         .rectangle = {0.0, 0.0, nebula1Data.texture.width / 8, nebula1Data.texture.height / 8},
-        .position = {windowWidth, windowHeight - nebula1Data.rectangle.height}, 
+        .position = {windowDimensions[0], windowDimensions[1] - nebula1Data.rectangle.height}, 
         .frame = 0,
         .runningTime = 0.0,
+        .updateTime = 1.0 / 12.0,
         .velocity = -200, // px per sec
     };
 
         AnimationData nebula2Data{
         .texture = LoadTexture("./textures/12_nebula_spritesheet.png"),
         .rectangle = {0.0, 0.0, nebula1Data.texture.width / 8, nebula1Data.texture.height / 8},
-        .position = {windowWidth + 300, windowHeight - nebula1Data.rectangle.height}, // +300px as offset
+        .position = {windowDimensions[0] + 300, windowDimensions[1] - nebula1Data.rectangle.height}, // +300px as offset
         .frame = 0,
         .runningTime = 0.0,
+        .updateTime = 1.0 / 16.0,
         .velocity = -200, // px per sec
     };
 
@@ -76,7 +78,7 @@ int main()
 
         // game logic begins
         // ground check and update velocity
-        if (scruffyData.position.y >= windowHeight - scruffyData.rectangle.height)
+        if (scruffyData.position.y >= windowDimensions[1] - scruffyData.rectangle.height)
         {
             // rectangle is in the ground
             scruffyData.velocity = 0;
@@ -136,7 +138,7 @@ int main()
 
 void updateScruffyAnimation(AnimationData &scruffy)
 {
-    if (scruffy.runningTime >= SCRUFFY_UPDATE_TIME)
+    if (scruffy.runningTime >= scruffy.updateTime)
     {
         scruffy.runningTime = 0.0;
         // update scruffy animation frame
@@ -153,7 +155,7 @@ void updateScruffyAnimation(AnimationData &scruffy)
 
 void updateNebulaAnimation(AnimationData &nebula)
 {
-    if (nebula.runningTime >= NEBULA_UPDATE_TIME)
+    if (nebula.runningTime >= nebula.updateTime)
     {
         nebula.runningTime = 0.0;
         // update scruffy animation frame
