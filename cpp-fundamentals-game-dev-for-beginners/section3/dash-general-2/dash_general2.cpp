@@ -1,7 +1,6 @@
 
 #include "raylib.h"
 
-
 struct AnimationData
 {
     Texture2D texture;
@@ -19,9 +18,7 @@ void updateNebulaAnimation(AnimationData &nebula);
 int main()
 {
     // window coordinates
-    // const int windowWidth = 512;
-    // const int windowHeight = 380;
-    const int windowDimensions[2] = {512,380};  // width, height
+    const int windowDimensions[2] = {512, 380}; // width, height
     int fps = 60;
     // initialise window
     InitWindow(windowDimensions[0], windowDimensions[1], "dasher");
@@ -40,31 +37,29 @@ int main()
         .position = {windowDimensions[0] / 2 - scruffyData.rectangle.width / 2, windowDimensions[1] - scruffyData.rectangle.height}, // bottom centre
         .frame = 0,
         .runningTime = 0.0,
-        .updateTime = 1.0/12.0,
+        .updateTime = 1.0 / 12.0,
         .velocity = 0, // px per sec
     };
 
     // nebula variables
-    AnimationData nebula1Data{
-        .texture = LoadTexture("./textures/12_nebula_spritesheet.png"),
-        .rectangle = {0.0, 0.0, nebula1Data.texture.width / 8, nebula1Data.texture.height / 8},
-        .position = {windowDimensions[0], windowDimensions[1] - nebula1Data.rectangle.height}, 
-        .frame = 0,
-        .runningTime = 0.0,
-        .updateTime = 1.0 / 12.0,
-        .velocity = -200, // px per sec
-    };
+    AnimationData nebulae[3]{};
+    for (int i = 0; i < 3; i++)
+    {
+        nebulae[i].texture = LoadTexture("./textures/12_nebula_spritesheet.png");
+        nebulae[i].rectangle.x = 0.0;
+        nebulae[i].rectangle.y = 0.0;
+        nebulae[i].rectangle.width = nebulae[i].texture.width / 8;
+        nebulae[i].rectangle.height = nebulae[i].texture.height / 8;
+        nebulae[i].frame = 0;
+        nebulae[i].runningTime = 0.0;
+        nebulae[i].updateTime = 1.0 / 16.0;
+        nebulae[i].velocity = -200; // px per sec
+        nebulae[i].position.y = windowDimensions[1] - nebulae[i].rectangle.height;
+    }
 
-        AnimationData nebula2Data{
-        .texture = LoadTexture("./textures/12_nebula_spritesheet.png"),
-        .rectangle = {0.0, 0.0, nebula1Data.texture.width / 8, nebula1Data.texture.height / 8},
-        .position = {windowDimensions[0] + 300, windowDimensions[1] - nebula1Data.rectangle.height}, // +300px as offset
-        .frame = 0,
-        .runningTime = 0.0,
-        .updateTime = 1.0 / 16.0,
-        .velocity = -200, // px per sec
-    };
-
+    nebulae[0].position.x = windowDimensions[0];
+    nebulae[1].position.x = windowDimensions[0] + 300; // offset to the right of the screen
+    nebulae[2].position.x = windowDimensions[0] + 600;
 
     SetTargetFPS(fps);
     // game loop
@@ -100,8 +95,10 @@ int main()
         }
 
         // update
-        nebula1Data.position.x += nebula1Data.velocity * dT;
-        nebula2Data.position.x += nebula2Data.velocity * dT;
+        for (int i = 0; i < 3; i++)
+        {
+            nebulae[i].position.x += nebulae[i].velocity * dT;
+        }
 
         // update scruffy position
         scruffyData.position.y += scruffyData.velocity * dT;
@@ -115,24 +112,29 @@ int main()
         }
 
         // nebula animation logic
-        nebula1Data.runningTime += dT;
-        nebula2Data.runningTime += dT;
-        updateNebulaAnimation(nebula1Data);
-        updateNebulaAnimation(nebula2Data);
+        for (int i = 0; i < 3; i++)
+        {
+            nebulae[i].runningTime += dT;
+            updateNebulaAnimation(nebulae[i]);
+        }
 
         // draw scruffy rect
         DrawTextureRec(scruffyData.texture, scruffyData.rectangle, scruffyData.position, WHITE);
         // draw nebula rect
-        DrawTextureRec(nebula1Data.texture, nebula1Data.rectangle, nebula1Data.position, WHITE);
-        DrawTextureRec(nebula2Data.texture, nebula2Data.rectangle, nebula2Data.position, RED);
+        DrawTextureRec(nebulae[1].texture, nebulae[1].rectangle, nebulae[1].position, WHITE);
+        DrawTextureRec(nebulae[2].texture, nebulae[2].rectangle, nebulae[2].position, RED);
+        DrawTextureRec(nebulae[0].texture, nebulae[0].rectangle, nebulae[0].position, GREEN);
 
         // game logic ends
         EndDrawing();
     }
 
     UnloadTexture(scruffyData.texture);
-    UnloadTexture(nebula1Data.texture);
-    UnloadTexture(nebula2Data.texture);
+    for (int i = 0; i < 3; i++)
+    {
+        UnloadTexture(nebulae[i].texture);
+    }
+
     CloseWindow();
 }
 
