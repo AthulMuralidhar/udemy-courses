@@ -215,6 +215,11 @@ int main()
             // loose the game
             DrawText("game over!", windowDimensions[0] / 4, windowDimensions[1] / 2, 40, RED);
         }
+        else if (scruffyData.position.x >= finishLine)
+        {
+
+            DrawText("you won!", windowDimensions[0] / 4, windowDimensions[1] / 2, 40, RED);
+        }
         else
         {
             // draw scruffy rect
