@@ -1,5 +1,6 @@
 
 #include "raylib.h"
+#include <iostream>
 
 struct AnimationData
 {
@@ -28,6 +29,7 @@ int main()
     // is the axe in air?
     bool isInAir(false);
     const int jumpVelocity = -600; // pixel per second
+    bool collision{};
 
     // textures
     const Texture2D scruffyTexture = LoadTexture("./textures/scarfy.png");
@@ -50,7 +52,7 @@ int main()
     // scruffy variables
     AnimationData scruffyData{
         .texture = scruffyTexture,
-        .rectangle = {0.0, 0.0, scruffyData.texture.width / 6.0, scruffyData.texture.height},
+        .rectangle = {0.0, 0.0, scruffyTexture.width / 6.0, scruffyTexture.height},
         .position = {windowDimensions[0] / 2 - scruffyData.rectangle.width / 2, windowDimensions[1] - scruffyData.rectangle.height}, // bottom centre
         .frame = 0,
         .runningTime = 0.0,
@@ -60,15 +62,15 @@ int main()
 
     // nebula variables
     const int numberOfNebulae = 6;
-    int nebulaVelocity{-200};  // px per sec
+    int nebulaVelocity{-200}; // px per sec
     AnimationData nebulae[numberOfNebulae]{};
     for (int i = 0; i < numberOfNebulae; i++)
     {
         nebulae[i].texture = nebulaTexture;
         nebulae[i].rectangle.x = 0.0;
         nebulae[i].rectangle.y = 0.0;
-        nebulae[i].rectangle.width = nebulae[i].texture.width / 8;
-        nebulae[i].rectangle.height = nebulae[i].texture.height / 8;
+        nebulae[i].rectangle.width = nebulaTexture.width / 8;
+        nebulae[i].rectangle.height = nebulaTexture.height / 8;
         nebulae[i].frame = 0;
         nebulae[i].runningTime = 0.0;
         nebulae[i].updateTime = 1.0 / 16.0;
@@ -77,9 +79,8 @@ int main()
         nebulae[i].position.x = windowDimensions[0] + (300 * i); // offset to the right of the screen
     }
 
-
     // finish line
-    float finishLine{nebulae[numberOfNebulae-1].position.x};
+    float finishLine{nebulae[numberOfNebulae - 1].position.x};
 
     SetTargetFPS(fps);
     // game loop
@@ -120,8 +121,6 @@ int main()
 
         DrawTextureEx(backgroundTexture, bg1Position, 0.0, 2.0, WHITE);
         DrawTextureEx(backgroundTexture, bg2Position, 0.0, 2.0, WHITE);
-
-        
         // draw midground
         mg1Position.x = mgX;
         mg1Position.y = 0.0;
@@ -139,7 +138,6 @@ int main()
 
         DrawTextureEx(foregroundTexture, fg1Position, 0.0, 2.0, WHITE);
         DrawTextureEx(foregroundTexture, fg2Position, 0.0, 2.0, WHITE);
-
 
         // game logic begins
         // ground check and update velocity
@@ -171,7 +169,6 @@ int main()
         }
         // update finish line
         finishLine += nebulaVelocity * dT;
-
         // update scruffy position
         scruffyData.position.y += scruffyData.velocity * dT;
 
@@ -190,13 +187,46 @@ int main()
             updateNebulaAnimation(nebulae[i]);
         }
 
-        // draw scruffy rect
-        DrawTextureRec(scruffyData.texture, scruffyData.rectangle, scruffyData.position, WHITE);
-        // draw nebula rect
-        for (int i = 0; i < numberOfNebulae; i++)
+        for (AnimationData nebula : nebulae)
         {
-            DrawTextureRec(nebulae[i].texture, nebulae[i].rectangle, nebulae[i].position, WHITE);
+            float nebulaPadding = 50.0;
+            Rectangle nebRec{
+                .x = nebula.position.x + nebulaPadding,
+                .y = nebula.position.y + nebulaPadding,
+                .width = nebula.rectangle.width - 2 * nebulaPadding,
+                .height = nebula.rectangle.height - 2 * nebulaPadding,
+            };
+
+            Rectangle scruffyRec{
+                .x = scruffyData.rectangle.x,
+                .y = scruffyData.rectangle.y,
+                .width = scruffyData.rectangle.width,
+                .height = scruffyData.rectangle.height,
+            };
+
+            if (CheckCollisionRecs(nebRec, scruffyRec))
+            {
+                collision = true;
+            }
         }
+
+        if (collision)
+        {
+            // loose the game
+            DrawText("game over!", windowDimensions[0] / 4, windowDimensions[1] / 2, 40, RED);
+        }
+        else
+        {
+            // draw scruffy rect
+            DrawTextureRec(scruffyTexture, scruffyData.rectangle, scruffyData.position, WHITE);
+            // draw nebula rect
+            for (int i = 0; i < numberOfNebulae; i++)
+            {
+                DrawTextureRec(nebulaTexture, nebulae[i].rectangle, nebulae[i].position, WHITE);
+            }
+        }
+
+        std::cout << collision << std::endl;
 
         // game logic ends
         EndDrawing();
