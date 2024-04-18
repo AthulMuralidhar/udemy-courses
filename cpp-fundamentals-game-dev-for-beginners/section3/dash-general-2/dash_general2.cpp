@@ -29,10 +29,27 @@ int main()
     bool isInAir(false);
     const int jumpVelocity = -600; // pixel per second
 
-    // scruffy variables
+    // textures
+    const Texture2D scruffyTexture = LoadTexture("./textures/scarfy.png");
+    const Texture2D nebulaTexture = LoadTexture("./textures/12_nebula_spritesheet.png");
+    const Texture2D backgroundTexture = LoadTexture("./textures/far-buildings.png");
+    const Texture2D midgroundTexture = LoadTexture("./textures/back-buildings.png");
+    const Texture2D foregroundTexture = LoadTexture("./textures/foreground.png");
 
+    // scrolling variables
+    float bgX{};
+    float mgX{};
+    float fgX{};
+    Vector2 bg1Position{};
+    Vector2 bg2Position{};
+    Vector2 mg1Position{};
+    Vector2 mg2Position{};
+    Vector2 fg1Position{};
+    Vector2 fg2Position{};
+
+    // scruffy variables
     AnimationData scruffyData{
-        .texture = LoadTexture("./textures/scarfy.png"),
+        .texture = scruffyTexture,
         .rectangle = {0.0, 0.0, scruffyData.texture.width / 6.0, scruffyData.texture.height},
         .position = {windowDimensions[0] / 2 - scruffyData.rectangle.width / 2, windowDimensions[1] - scruffyData.rectangle.height}, // bottom centre
         .frame = 0,
@@ -42,10 +59,12 @@ int main()
     };
 
     // nebula variables
-    AnimationData nebulae[3]{};
-    for (int i = 0; i < 3; i++)
+    const int numberOfNebulae = 6;
+    int nebulaVelocity{-200};  // px per sec
+    AnimationData nebulae[numberOfNebulae]{};
+    for (int i = 0; i < numberOfNebulae; i++)
     {
-        nebulae[i].texture = LoadTexture("./textures/12_nebula_spritesheet.png");
+        nebulae[i].texture = nebulaTexture;
         nebulae[i].rectangle.x = 0.0;
         nebulae[i].rectangle.y = 0.0;
         nebulae[i].rectangle.width = nebulae[i].texture.width / 8;
@@ -53,13 +72,14 @@ int main()
         nebulae[i].frame = 0;
         nebulae[i].runningTime = 0.0;
         nebulae[i].updateTime = 1.0 / 16.0;
-        nebulae[i].velocity = -200; // px per sec
+        nebulae[i].velocity = nebulaVelocity;
         nebulae[i].position.y = windowDimensions[1] - nebulae[i].rectangle.height;
+        nebulae[i].position.x = windowDimensions[0] + (300 * i); // offset to the right of the screen
     }
 
-    nebulae[0].position.x = windowDimensions[0];
-    nebulae[1].position.x = windowDimensions[0] + 300; // offset to the right of the screen
-    nebulae[2].position.x = windowDimensions[0] + 600;
+
+    // finish line
+    float finishLine{nebulae[numberOfNebulae-1].position.x};
 
     SetTargetFPS(fps);
     // game loop
@@ -70,6 +90,56 @@ int main()
 
         // delta time - time since last frame
         const float dT = GetFrameTime();
+
+        // scroll background
+        bgX -= 20 * dT;
+        if (bgX <= -backgroundTexture.width * 2) // this check ensures that the bg position is reset once the scroll passes the screen
+        {
+            bgX = 0.0;
+        }
+
+        // scroll migground
+        mgX -= 40 * dT;
+        if (mgX <= -midgroundTexture.width * 2)
+        {
+            mgX = 0.0;
+        }
+
+        // scroll foreground
+        fgX -= 80 * dT;
+        if (fgX <= -foregroundTexture.width * 2)
+        {
+            fgX = 0.0;
+        }
+
+        // draw background
+        bg1Position.x = bgX;
+        bg1Position.y = 0.0;
+        bg2Position.x = bgX + backgroundTexture.width * 2;
+        bg2Position.y = 0.0;
+
+        DrawTextureEx(backgroundTexture, bg1Position, 0.0, 2.0, WHITE);
+        DrawTextureEx(backgroundTexture, bg2Position, 0.0, 2.0, WHITE);
+
+        
+        // draw midground
+        mg1Position.x = mgX;
+        mg1Position.y = 0.0;
+        mg2Position.x = mgX + midgroundTexture.width * 2;
+        mg2Position.y = 0.0;
+
+        DrawTextureEx(midgroundTexture, mg1Position, 0.0, 2.0, WHITE);
+        DrawTextureEx(midgroundTexture, mg2Position, 0.0, 2.0, WHITE);
+
+        // draw foreground
+        fg1Position.x = fgX;
+        fg1Position.y = 0.0;
+        fg2Position.x = fgX + foregroundTexture.width * 2;
+        fg2Position.y = 0.0;
+
+        DrawTextureEx(foregroundTexture, fg1Position, 0.0, 2.0, WHITE);
+        DrawTextureEx(foregroundTexture, fg2Position, 0.0, 2.0, WHITE);
+
 
         // game logic begins
         // ground check and update velocity
@@ -94,11 +164,13 @@ int main()
             scruffyData.velocity += jumpVelocity;
         }
 
-        // update
-        for (int i = 0; i < 3; i++)
+        // update nebula
+        for (int i = 0; i < numberOfNebulae; i++)
         {
             nebulae[i].position.x += nebulae[i].velocity * dT;
         }
+        // update finish line
+        finishLine += nebulaVelocity * dT;
 
         // update scruffy position
         scruffyData.position.y += scruffyData.velocity * dT;
@@ -112,7 +184,7 @@ int main()
         }
 
         // nebula animation logic
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < numberOfNebulae; i++)
         {
             nebulae[i].runningTime += dT;
             updateNebulaAnimation(nebulae[i]);
@@ -121,19 +193,20 @@ int main()
         // draw scruffy rect
         DrawTextureRec(scruffyData.texture, scruffyData.rectangle, scruffyData.position, WHITE);
         // draw nebula rect
-        DrawTextureRec(nebulae[1].texture, nebulae[1].rectangle, nebulae[1].position, WHITE);
-        DrawTextureRec(nebulae[2].texture, nebulae[2].rectangle, nebulae[2].position, RED);
-        DrawTextureRec(nebulae[0].texture, nebulae[0].rectangle, nebulae[0].position, GREEN);
+        for (int i = 0; i < numberOfNebulae; i++)
+        {
+            DrawTextureRec(nebulae[i].texture, nebulae[i].rectangle, nebulae[i].position, WHITE);
+        }
 
         // game logic ends
         EndDrawing();
     }
 
-    UnloadTexture(scruffyData.texture);
-    for (int i = 0; i < 3; i++)
-    {
-        UnloadTexture(nebulae[i].texture);
-    }
+    UnloadTexture(scruffyTexture);
+    UnloadTexture(nebulaTexture);
+    UnloadTexture(backgroundTexture);
+    UnloadTexture(midgroundTexture);
+    UnloadTexture(foregroundTexture);
 
     CloseWindow();
 }
