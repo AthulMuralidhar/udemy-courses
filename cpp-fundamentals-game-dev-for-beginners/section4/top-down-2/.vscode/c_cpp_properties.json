@@ -42,7 +42,7 @@
         {
             "name": "Linux",
             "includePath": [
-                // "/home/linuxbrew/.linuxbrew/include",
+                "/home/linuxbrew/.linuxbrew/include",
                 "${workspaceFolder}/**"
             ],
             "defines": [
@@ -55,7 +55,7 @@
             "cStandard": "c11",
             "cppStandard": "c++14",
             "intelliSenseMode": "gcc-x64",
-            "compilerPath": "/usr/bin/gcc"
+            "compilerPath": "/usr/bin/g++"
         }
     ],
     "version": 4

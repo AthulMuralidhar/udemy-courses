@@ -69,9 +69,9 @@
             "linux": {
                 "args": [
                     "PROJECT_NAME=${fileBasenameNoExtension}",
-                    "DESTDIR=./",
+                    "DESTDIR=/home/linuxbrew/.linuxbrew",
                     "RAYLIB_LIBTYPE=SHARED",
-                    // "EXAMPLE_RUNTIME_PATH=/home/linuxbrew/.linuxbrew/lib",
+                    "EXAMPLE_RUNTIME_PATH=/home/linuxbrew/.linuxbrew/lib",
                     "OBJS=*.cpp"
                 ]
             },
