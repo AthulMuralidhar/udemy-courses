@@ -198,8 +198,8 @@ int main()
             };
 
             Rectangle scruffyRec{
-                .x = scruffyData.rectangle.x,
-                .y = scruffyData.rectangle.y,
+                .x = scruffyData.position.x,
+                .y = scruffyData.position.y,
                 .width = scruffyData.rectangle.width,
                 .height = scruffyData.rectangle.height,
             };
