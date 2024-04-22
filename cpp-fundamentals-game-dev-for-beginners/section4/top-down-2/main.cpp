@@ -16,6 +16,13 @@ int main()
     Vector2 mapPosition{0.0, 0.0};
     Vector2 direction{0.0, 0.0};
 
+    Texture2D knight = LoadTexture("characters/knight_idle_spritesheet.png");
+    Vector2 knightPosition{
+        .x = windoeWidth / 2.0f - (0.5f * (float)knight.width / 6.0f), // we want the knight to be in the centre of the screen
+        .y = windowHeight / 2.0f - (0.5 * knight.height),
+    };
+    const float scaleForKnight = 4.0;
+
     SetTargetFPS(60);
     while (!WindowShouldClose())
     {
@@ -42,7 +49,24 @@ int main()
             mapPosition = Vector2Subtract(mapPosition, scaled);
         }
 
+        // draw the map
         DrawTextureEx(map, mapPosition, 0.0, 4.0, WHITE);
+
+        // draw the character
+        Rectangle source{
+            .x = 0.0,
+            .y = 0.0,
+            .width = knight.width / 6.0, // as there are 6 sprites in the sprite sheet
+            .height = knight.height,
+        };
+
+        Rectangle destination{
+            .x = knightPosition.x,
+            .y = knightPosition.y,
+            .width = knight.width / 6.0 * scaleForKnight, // as there are 6 sprites in the sprite sheet
+            .height = knight.height * scaleForKnight,
+        };
+        DrawTexturePro(knight, source, destination, Vector2{0.0,0.0}, 0.f, WHITE);
 
         EndDrawing();
     }
