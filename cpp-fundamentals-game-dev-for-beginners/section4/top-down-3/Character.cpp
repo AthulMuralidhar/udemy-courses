@@ -3,7 +3,7 @@
 
 Character::Character()
 {
-    characterWidth = (float)currentTexture.width / 6.0f;
+    characterWidth = (float)currentTexture.width / maxFrames;
     characterHeight = (float)currentTexture.height;
 }
 

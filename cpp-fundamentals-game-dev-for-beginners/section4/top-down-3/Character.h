@@ -15,15 +15,15 @@ private:
     Vector2 screenPosition{};        // upper left corner of the character rectangle
     Vector2 worldPosition{0.0, 0.0}; // upper left corner of the world / window
     Vector2 direction{0.0, 0.0};
-    const float speed = 4.0;
+    float speed = 4.0;
     // 1 == facing right, -1 == facing left
     float rightLeft = 1.f;
     // animation variables
     float runningTime{};
-    const float updateTime = 1.f / 12.f;
+    float updateTime = 1.f / 12.f;
     int currentFrame{};
-    const int maxFrames = 6;
-    const float scaleForCharacter = 4.0;
+    int maxFrames = 6;
+    float scaleForCharacter = 4.0;
     float characterWidth{};
     float characterHeight{};
 };
