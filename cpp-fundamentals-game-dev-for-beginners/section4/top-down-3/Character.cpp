@@ -7,6 +7,10 @@ Character::Character()
     characterHeight = (float)currentTexture.height;
 }
 
+void Character::undoMovement() {
+    worldPosition = lastFrameWorldPosition;
+}
+
 void Character::setScreenPosition(int windowWidth, int windowHeight)
 {
     // screen position == knight position
@@ -18,6 +22,8 @@ void Character::setScreenPosition(int windowWidth, int windowHeight)
 
 void Character::tick(float dT)
 {
+    lastFrameWorldPosition = worldPosition;
+
     if (IsKeyDown(KEY_A))
         direction.x -= 1.0;
     if (IsKeyDown(KEY_D))

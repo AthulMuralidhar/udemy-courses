@@ -7,6 +7,7 @@ public:
     void setScreenPosition(int windowWidth, int windowHeight);
     void tick(float dT);
     Vector2 getWorldPosition() { return worldPosition; };
+    void undoMovement();
 
 private:
     Texture2D currentTexture = LoadTexture("characters/knight_idle_spritesheet.png");
@@ -26,4 +27,5 @@ private:
     float scaleForCharacter = 4.0;
     float characterWidth{};
     float characterHeight{};
+    Vector2 lastFrameWorldPosition{};
 };

@@ -10,6 +10,7 @@ int main()
 
     Texture2D map = LoadTexture("tileset/map1.png");
     Vector2 mapPosition{0.0, 0.0};
+    const float mapScale{4.f};
 
     Character knight;
     knight.setScreenPosition(windowWidth, windowHeight);
@@ -22,9 +23,19 @@ int main()
 
         // draw the map
         mapPosition = Vector2Scale(knight.getWorldPosition(), -1.f);
-        DrawTextureEx(map, mapPosition, 0.0, 4.0, WHITE);
+        DrawTextureEx(map, mapPosition, 0.0, mapScale, WHITE);
 
+        // render knight
         knight.tick(GetFrameTime());
+        // check map bounds
+        if (knight.getWorldPosition().x < 0.f ||
+            knight.getWorldPosition().y < 0.f ||
+            knight.getWorldPosition().x + windowWidth > map.width * mapScale ||
+            knight.getWorldPosition().y + windowHeight > map.height * mapScale
+        )
+        {
+            knight.undoMovement();
+        }
 
         EndDrawing();
     }
