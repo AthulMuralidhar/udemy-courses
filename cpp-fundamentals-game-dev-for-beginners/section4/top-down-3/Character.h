@@ -3,8 +3,7 @@
 class Character
 {
 public:
-    Character();
-    void setScreenPosition(int windowWidth, int windowHeight);
+    Character(int windowWidth, int windowHeight);
     void tick(float dT);
     Vector2 getWorldPosition() { return worldPosition; };
     void undoMovement();
@@ -15,7 +14,6 @@ private:
     Texture2D runTexture = LoadTexture("characters/knight_run_spritesheet.png");
     Vector2 screenPosition{};        // upper left corner of the character rectangle
     Vector2 worldPosition{0.0, 0.0}; // upper left corner of the world / window
-    Vector2 direction{0.0, 0.0};
     float speed = 4.0;
     // 1 == facing right, -1 == facing left
     float rightLeft = 1.f;
@@ -24,8 +22,8 @@ private:
     float updateTime = 1.f / 12.f;
     int currentFrame{};
     int maxFrames = 6;
-    float scaleForCharacter = 4.0;
     float characterWidth{};
     float characterHeight{};
     Vector2 lastFrameWorldPosition{};
+    float characterScale = 4.f;
 };

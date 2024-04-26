@@ -12,8 +12,7 @@ int main()
     Vector2 mapPosition{0.0, 0.0};
     const float mapScale{4.f};
 
-    Character knight;
-    knight.setScreenPosition(windowWidth, windowHeight);
+    Character knight(windowWidth, windowHeight);
 
     SetTargetFPS(60);
     while (!WindowShouldClose())

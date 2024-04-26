@@ -1,27 +1,27 @@
 #include "Character.h"
 #include "raymath.h"
+#include <iostream>
 
-Character::Character()
+Character::Character(int windowWidth, int windowHeight)
 {
-    characterWidth = (float)currentTexture.width / maxFrames;
-    characterHeight = (float)currentTexture.height;
-}
+    characterWidth = static_cast<float>(currentTexture.width) / maxFrames;
+    characterHeight = static_cast<float>(currentTexture.height);
 
-void Character::undoMovement() {
-    worldPosition = lastFrameWorldPosition;
-}
-
-void Character::setScreenPosition(int windowWidth, int windowHeight)
-{
     // screen position == knight position
     screenPosition = {
-        .x = windowWidth / 2.0f - (0.5f * characterWidth), // centere the knight
-        .y = windowHeight / 2.0f - (0.5f * characterHeight),
+        .x = windowWidth / 2.0f - characterScale * (0.5f * characterWidth), // centere the knight
+        .y = windowHeight / 2.0f - characterScale * (0.5f * characterHeight),
     };
 }
 
-void Character::tick(float dT)
+void Character::undoMovement()
 {
+    worldPosition = lastFrameWorldPosition;
+}
+
+void Character::tick(float dT)
+{   
+    Vector2 direction{};  // need to set the direction to 0 every tick 
     lastFrameWorldPosition = worldPosition;
 
     if (IsKeyDown(KEY_A))
@@ -71,8 +71,8 @@ void Character::tick(float dT)
     Rectangle destination{
         .x = screenPosition.x,
         .y = screenPosition.y,
-        .width = characterWidth * scaleForCharacter,
-        .height = characterHeight * scaleForCharacter,
+        .width = characterWidth * characterScale,
+        .height = characterHeight * characterScale,
     };
     DrawTexturePro(currentTexture, source, destination, Vector2{0.0, 0.0}, 0.f, WHITE);
 }
