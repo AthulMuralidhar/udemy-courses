@@ -5,33 +5,19 @@
 Character::Character(int windowWidth, int windowHeight)
 {
     // character only
-    characterWidth = static_cast<float>(currentTexture.width) / maxFrames;
-    characterHeight = static_cast<float>(currentTexture.height);
+    width = static_cast<float>(currentTexture.width) / maxFrames;
+    height = static_cast<float>(currentTexture.height);
 
     // screen position == knight position
     screenPosition = {
-        .x = windowWidth / 2.0f - characterScale * (0.5f * characterWidth), // centere the knight
-        .y = windowHeight / 2.0f - characterScale * (0.5f * characterHeight),
+        .x = windowWidth / 2.0f - scale * (0.5f * width), // centere the knight
+        .y = windowHeight / 2.0f - scale * (0.5f * height),
     };
-}
-
-Rectangle Character::getCollisionRec() {
-    return Rectangle{
-        .x = screenPosition.x,
-        .y = screenPosition.y,
-        .width = currentTexture.width * characterScale,
-        .height = currentTexture.height * characterScale
-    };
-}
-
-void Character::undoMovement()
-{
-    worldPosition = lastFrameWorldPosition;
 }
 
 void Character::tick(float dT)
-{   
-    Vector2 direction{};  // need to set the direction to 0 every tick 
+{
+    Vector2 direction{}; // need to set the direction to 0 every tick
     lastFrameWorldPosition = worldPosition;
 
     if (IsKeyDown(KEY_A))
@@ -72,17 +58,17 @@ void Character::tick(float dT)
     }
 
     Rectangle source{
-        .x = currentFrame * characterWidth,
+        .x = currentFrame * width,
         .y = 0.0,
-        .width = rightLeft * characterWidth,
-        .height = characterHeight,
+        .width = rightLeft * width,
+        .height = height,
     };
 
     Rectangle destination{
         .x = screenPosition.x,
         .y = screenPosition.y,
-        .width = characterWidth * characterScale,
-        .height = characterHeight * characterScale,
+        .width = width * scale,
+        .height = height * scale,
     };
     DrawTexturePro(currentTexture, source, destination, Vector2{0.0, 0.0}, 0.f, WHITE);
 }
