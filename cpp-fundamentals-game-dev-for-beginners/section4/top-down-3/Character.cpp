@@ -15,10 +15,11 @@ Character::Character(int windowWidth, int windowHeight)
     };
 }
 
-void Character::tick(float dT)
+ void Character::tick(float dT) 
 {
+    BaseCharacter::tick(dT);
+
     Vector2 direction{}; // need to set the direction to 0 every tick
-    lastFrameWorldPosition = worldPosition;
 
     if (IsKeyDown(KEY_A))
         direction.x -= 1.0;
@@ -46,29 +47,4 @@ void Character::tick(float dT)
         currentTexture = idleTexture;
     }
 
-    // update animation frame
-    runningTime += dT;
-    if (runningTime >= updateTime)
-    {
-        runningTime = 0.f;
-        currentFrame++;
-
-        if (currentFrame > maxFrames)
-            currentFrame = 0;
-    }
-
-    Rectangle source{
-        .x = currentFrame * width,
-        .y = 0.0,
-        .width = rightLeft * width,
-        .height = height,
-    };
-
-    Rectangle destination{
-        .x = screenPosition.x,
-        .y = screenPosition.y,
-        .width = width * scale,
-        .height = height * scale,
-    };
-    DrawTexturePro(currentTexture, source, destination, Vector2{0.0, 0.0}, 0.f, WHITE);
 }

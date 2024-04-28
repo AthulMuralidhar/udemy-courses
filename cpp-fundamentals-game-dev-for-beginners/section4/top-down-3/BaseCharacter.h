@@ -10,6 +10,7 @@ public:
     Vector2 getWorldPosition() { return worldPosition; };
     void undoMovement();
     Rectangle getCollisionRec();
+    virtual void tick(float dT);
 
 protected:
     Texture2D currentTexture = LoadTexture("characters/knight_idle_spritesheet.png");
