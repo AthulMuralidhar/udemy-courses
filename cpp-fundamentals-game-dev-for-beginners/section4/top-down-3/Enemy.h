@@ -1,16 +1,16 @@
 #include "raylib.h"
 
-class Character
+class Enemy
 {
 public:
-    Character(int windowWidth, int windowHeight);
+    Enemy(Vector2 pos, Texture2D idleTex, Texture2D runTex);
     void tick(float dT);
     Vector2 getWorldPosition() { return worldPosition; };
     void undoMovement();
     Rectangle getCollisionRec();
 
 private:
-    Texture2D currentTexture = LoadTexture("characters/knight_idle_spritesheet.png");
+    Texture2D currentTexture{};
     Texture2D idleTexture = LoadTexture("characters/knight_idle_spritesheet.png");
     Texture2D runTexture = LoadTexture("characters/knight_run_spritesheet.png");
     Vector2 screenPosition{};        // upper left corner of the character rectangle
@@ -23,8 +23,8 @@ private:
     float updateTime = 1.f / 12.f;
     int currentFrame{};
     int maxFrames = 6;
-    float characterWidth{};
-    float characterHeight{};
+    float width{};
+    float height{};
     Vector2 lastFrameWorldPosition{};
     float characterScale = 4.f;
 };

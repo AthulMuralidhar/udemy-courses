@@ -4,6 +4,7 @@
 
 Character::Character(int windowWidth, int windowHeight)
 {
+    // character only
     characterWidth = static_cast<float>(currentTexture.width) / maxFrames;
     characterHeight = static_cast<float>(currentTexture.height);
 
@@ -11,6 +12,15 @@ Character::Character(int windowWidth, int windowHeight)
     screenPosition = {
         .x = windowWidth / 2.0f - characterScale * (0.5f * characterWidth), // centere the knight
         .y = windowHeight / 2.0f - characterScale * (0.5f * characterHeight),
+    };
+}
+
+Rectangle Character::getCollisionRec() {
+    return Rectangle{
+        .x = screenPosition.x,
+        .y = screenPosition.y,
+        .width = currentTexture.width * characterScale,
+        .height = currentTexture.height * characterScale
     };
 }
 

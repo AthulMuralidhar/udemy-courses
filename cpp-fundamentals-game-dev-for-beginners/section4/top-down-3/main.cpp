@@ -2,6 +2,7 @@
 #include "raymath.h"
 #include "Character.h"
 #include "Prop.h"
+#include "Enemy.h"
 
 int main()
 {
@@ -13,9 +14,16 @@ int main()
     Vector2 mapPosition{0.0, 0.0};
     const float mapScale{4.f};
 
-    Character knight(windowWidth, windowHeight);
+    // init character
+    Character knight{windowWidth, windowHeight};
 
-    Prop rock(Vector2{}, LoadTexture("nature_tileset/Rock.png"));
+    // init props
+    Prop props[2]{
+        {Vector2{600.f, 300.f}, LoadTexture("nature_tileset/Rock.png")},
+        {Vector2{400.f, 500.f}, LoadTexture("nature_tileset/Log.png")}};
+
+    // init  enemy
+    Enemy goblin{Vector2{}, LoadTexture("characters/goblin_idle_spritesheet.png"), LoadTexture("characters/goblin_run_spritesheet.png")};
 
     SetTargetFPS(60);
     while (!WindowShouldClose())
@@ -28,7 +36,13 @@ int main()
         DrawTextureEx(map, mapPosition, 0.0, mapScale, WHITE);
 
         // render rock
-        rock.Render(knight.getWorldPosition());
+        // rock.Render(knight.getWorldPosition());
+
+        // render props
+        for (auto prop : props)
+        {
+            prop.Render(knight.getWorldPosition());
+        }
 
         // render knight
         knight.tick(GetFrameTime());
@@ -40,6 +54,16 @@ int main()
         {
             knight.undoMovement();
         }
+
+        // check for prop collisions
+        for (auto prop : props)
+        {
+            if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPosition()), knight.getCollisionRec()))
+                knight.undoMovement();
+        }
+
+        // draw enemy
+        goblin.tick(GetFrameTime());
 
         EndDrawing();
     }
