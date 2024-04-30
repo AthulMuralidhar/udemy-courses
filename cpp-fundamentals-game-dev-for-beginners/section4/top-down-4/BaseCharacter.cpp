@@ -8,10 +8,10 @@ BaseCharacter::BaseCharacter()
 Rectangle BaseCharacter::getCollisionRec()
 {
     return Rectangle{
-        .x = screenPosition.x,
-        .y = screenPosition.y,
-        .width = currentTexture.width * scale,
-        .height = currentTexture.height * scale};
+        .x = getScreenPosition().x,
+        .y = getScreenPosition().y,
+        .width = width * scale,
+        .height = height * scale};
 }
 
 void BaseCharacter::undoMovement()
@@ -37,10 +37,8 @@ void BaseCharacter::tick(float dT)
     // update movement
     if (Vector2Length(velocity) != 0.0)
     {
-        Vector2 velocity = Vector2Normalize(velocity);
-        Vector2 scaled = Vector2Scale(velocity, speed);
         // world position += direction
-        worldPosition = Vector2Add(worldPosition, scaled);
+        worldPosition = Vector2Add(worldPosition, Vector2Scale(Vector2Normalize(velocity), speed));
 
         velocity.x < 0.f ? rightLeft = -1.f : rightLeft = 1.f;
         // set sprite sheet based on character's movement
@@ -61,8 +59,8 @@ void BaseCharacter::tick(float dT)
     };
 
     Rectangle destination{
-        .x = screenPosition.x,
-        .y = screenPosition.y,
+        .x = getScreenPosition().x,
+        .y = getScreenPosition().y,
         .width = width * scale,
         .height = height * scale,
     };

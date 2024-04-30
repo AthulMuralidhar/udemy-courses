@@ -2,18 +2,26 @@
 #include "raymath.h"
 #include <iostream>
 
-Character::Character(int windowWidth, int windowHeight)
+Character::Character(int windowWidth, int windowHeight) : windowWidth(windowWidth), windowHeight(windowHeight)
 {
-    // character only
+    // // character only
     width = static_cast<float>(currentTexture.width) / maxFrames;
     height = static_cast<float>(currentTexture.height);
 
     // screen position == knight position
-    screenPosition = {
+    // screenPosition = {
+    //     .x = windowWidth / 2.0f - scale * (0.5f * width), // centere the knight
+    //     .y = windowHeight / 2.0f - scale * (0.5f * height),
+    // };
+}
+
+Vector2 Character::getScreenPosition() {
+        return Vector2{
         .x = windowWidth / 2.0f - scale * (0.5f * width), // centere the knight
         .y = windowHeight / 2.0f - scale * (0.5f * height),
     };
 }
+
 
 void Character::tick(float dT)
 {
