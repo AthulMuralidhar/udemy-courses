@@ -13,6 +13,8 @@ public:
     virtual void tick(float dT);
     virtual Vector2 getScreenPosition() = 0; // a pure virtual function making this an abstract class
     // meaning, that this class cannot have an instance of its own
+    bool getAlive() { return alive; };
+    void setAive(bool isAlive){alive = isAlive;};
 
 protected:
     Texture2D currentTexture{LoadTexture("characters/knight_idle_spritesheet.png")};
@@ -34,6 +36,7 @@ protected:
     Vector2 velocity{};
 
 private:
+    bool alive{true};
 };
 
 #endif

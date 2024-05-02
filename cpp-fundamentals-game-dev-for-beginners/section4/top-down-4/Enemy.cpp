@@ -14,7 +14,6 @@ Enemy::Enemy(Vector2 pos, Texture2D idleTex, Texture2D runTex)
     worldPosition = pos;
     idleTexture = idleTex;
     runTexture = runTex;
-
 }
 
 Vector2 Enemy::getScreenPosition()
@@ -24,7 +23,8 @@ Vector2 Enemy::getScreenPosition()
 
 void Enemy::tick(float dT)
 {
-
+    if (!getAlive())
+        return;
     // get toTarget vector
     velocity = Vector2Subtract(target->getScreenPosition(), getScreenPosition());
     BaseCharacter::tick(dT);

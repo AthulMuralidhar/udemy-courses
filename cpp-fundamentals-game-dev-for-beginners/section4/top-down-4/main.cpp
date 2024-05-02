@@ -36,9 +36,6 @@ int main()
         mapPosition = Vector2Scale(knight.getWorldPosition(), -1.f);
         DrawTextureEx(map, mapPosition, 0.0, mapScale, WHITE);
 
-        // render rock
-        // rock.Render(knight.getWorldPosition());
-
         // render props
         for (auto prop : props)
         {
@@ -65,6 +62,13 @@ int main()
 
         // draw enemy
         goblin.tick(GetFrameTime());
+
+
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            if (CheckCollisionRecs(goblin.getCollisionRec(), knight.getweaponCollisionRec())) {
+                goblin.setAive(false);
+            }
+        }
 
         EndDrawing();
     }
