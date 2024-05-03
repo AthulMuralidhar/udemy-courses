@@ -23,9 +23,18 @@ int main()
         {Vector2{600.f, 300.f}, LoadTexture("nature_tileset/Rock.png")},
         {Vector2{400.f, 500.f}, LoadTexture("nature_tileset/Log.png")}};
 
-    // init  enemy
-    Enemy goblin{Vector2{}, LoadTexture("characters/goblin_idle_spritesheet.png"), LoadTexture("characters/goblin_run_spritesheet.png")};
-    goblin.setTarget(&knight);
+    // init  enemies
+    Enemy *enemies[]{
+        new Enemy{Vector2{800.f, 300.f}, LoadTexture("characters/goblin_idle_spritesheet.png"), LoadTexture("characters/goblin_run_spritesheet.png")},
+        new Enemy{Vector2{500.f, 700.f}, LoadTexture("characters/slime_idle_spritesheet.png"), LoadTexture("characters/slime_run_spritesheet.png")},
+    };
+
+    // goblin.setTarget(&knight);
+
+    for (auto enemy : enemies)
+    {
+        enemy->setTarget(&knight);
+    }
 
     SetTargetFPS(60);
     while (!WindowShouldClose())
@@ -47,13 +56,13 @@ int main()
         {
             DrawText("game over", 55.f, 45.f, 40, RED);
             EndDrawing();
-             continue;
+            continue;
         }
         else
         {
             std::string health = "health: ";
             health.append(std::to_string(knight.getHealth()), 0, 5);
-            DrawText(health.c_str() ,55.f, 45.f, 40, RED);
+            DrawText(health.c_str(), 55.f, 45.f, 40, RED);
         }
 
         // render knight
@@ -74,14 +83,17 @@ int main()
                 knight.undoMovement();
         }
 
-        // draw enemy
-        goblin.tick(GetFrameTime());
-
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        // draw enemies
+        for (auto enemy : enemies)
         {
-            if (CheckCollisionRecs(goblin.getCollisionRec(), knight.getweaponCollisionRec()))
+            enemy->tick(GetFrameTime());
+
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
             {
-                goblin.setAive(false);
+                if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getweaponCollisionRec()))
+                {
+                    enemy->setAive(false);
+                }
             }
         }
 
