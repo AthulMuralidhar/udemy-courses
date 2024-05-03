@@ -88,3 +88,13 @@ void Character::tick(float dT)
     // draw collision rec
     DrawRectangleLines(weaponCollisionRec.x, weaponCollisionRec.y, weaponCollisionRec.width, weaponCollisionRec.height, RED);
 }
+
+
+void Character::takeDamage(float  damage) {
+    health -= damage;
+    if (health <= 0.f)
+    {
+        setAive(false);
+    }
+    
+}

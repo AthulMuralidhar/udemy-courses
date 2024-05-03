@@ -3,6 +3,7 @@
 #include "Character.h"
 #include "Prop.h"
 #include "Enemy.h"
+#include <string>
 
 int main()
 {
@@ -42,6 +43,19 @@ int main()
             prop.Render(knight.getWorldPosition());
         }
 
+        if (!knight.getAlive())
+        {
+            DrawText("game over", 55.f, 45.f, 40, RED);
+            EndDrawing();
+             continue;
+        }
+        else
+        {
+            std::string health = "health: ";
+            health.append(std::to_string(knight.getHealth()), 0, 5);
+            DrawText(health.c_str() ,55.f, 45.f, 40, RED);
+        }
+
         // render knight
         knight.tick(GetFrameTime());
         // check map bounds
@@ -63,9 +77,10 @@ int main()
         // draw enemy
         goblin.tick(GetFrameTime());
 
-
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            if (CheckCollisionRecs(goblin.getCollisionRec(), knight.getweaponCollisionRec())) {
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+            if (CheckCollisionRecs(goblin.getCollisionRec(), knight.getweaponCollisionRec()))
+            {
                 goblin.setAive(false);
             }
         }

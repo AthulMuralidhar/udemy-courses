@@ -28,6 +28,12 @@ void Enemy::tick(float dT)
     // get toTarget vector
     velocity = Vector2Subtract(target->getScreenPosition(), getScreenPosition());
     BaseCharacter::tick(dT);
+
+
+    if (CheckCollisionRecs(getCollisionRec(), target->getCollisionRec())) {
+        target->takeDamage(damagePerSec*dT);
+    }
+    
 }
 
 void Enemy::setTarget(Character *character)
